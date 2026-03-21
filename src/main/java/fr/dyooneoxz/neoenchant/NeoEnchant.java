@@ -1,9 +1,9 @@
-package fr.neoxz.neoenchant;
+package fr.dyooneoxz.neoenchant;
 
 import com.mojang.logging.LogUtils;
-import fr.neoxz.neoenchant.client.ClientModEvents;
-import fr.neoxz.neoenchant.init.ModEffects;
-import fr.neoxz.neoenchant.init.ModEnchantments;
+import fr.dyooneoxz.neoenchant.client.ClientModEvents;
+import fr.dyooneoxz.neoenchant.init.ModEffects;
+import fr.dyooneoxz.neoenchant.init.ModEnchantments;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -26,9 +26,9 @@ public class NeoEnchant
 
         ModEnchantments.register(modEventBus);
         ModEffects.register(modEventBus);
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            MinecraftForge.EVENT_BUS.register(ClientModEvents.class);
-        }
+        //if (FMLEnvironment.dist == Dist.CLIENT) {
+        //    MinecraftForge.EVENT_BUS.register(ClientModEvents.class);
+        //}
 
         LOGGER.info("Le mod NeoEnchant est chargé.");
         MinecraftForge.EVENT_BUS.register(this);

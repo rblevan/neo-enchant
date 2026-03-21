@@ -1,8 +1,8 @@
-package fr.neoxz.neoenchant.init;
+package fr.dyooneoxz.neoenchant.init;
 
-import fr.neoxz.neoenchant.NeoEnchant;
-import fr.neoxz.neoenchant.enchantments.FrostEnchantment;
-import fr.neoxz.neoenchant.enchantments.PoisonEnchantment;
+import fr.dyooneoxz.neoenchant.NeoEnchant;
+import fr.dyooneoxz.neoenchant.enchantments.FrostEnchantment;
+import fr.dyooneoxz.neoenchant.enchantments.PoisonEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;

@@ -1,9 +1,8 @@
-package fr.neoxz.neoenchant.enchantments;
+package fr.dyooneoxz.neoenchant.enchantments;
 
-import fr.neoxz.neoenchant.init.ModEffects;
-import fr.neoxz.neoenchant.init.ModEnchantments;
+import fr.dyooneoxz.neoenchant.init.ModEffects;
+import fr.dyooneoxz.neoenchant.init.ModEnchantments;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -53,7 +52,7 @@ public class FrostEnchantment extends Enchantment {
 
     @Override
     protected boolean checkCompatibility(Enchantment other) {
-        if (other == Enchantments.FIRE_ASPECT || other == ModEnchantments.POISON_STRIKE.get()) {
+        if (other == Enchantments.FIRE_ASPECT || other instanceof PoisonEnchantment) {
             return false;
         }
         return super.checkCompatibility(other);

@@ -1,4 +1,4 @@
-package fr.neoxz.neoenchant;
+package fr.dyooneoxz.neoenchant;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

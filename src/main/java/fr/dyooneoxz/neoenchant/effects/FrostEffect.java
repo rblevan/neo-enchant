@@ -1,4 +1,4 @@
-package fr.neoxz.neoenchant.effects;
+package fr.dyooneoxz.neoenchant.effects;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.effect.MobEffect;

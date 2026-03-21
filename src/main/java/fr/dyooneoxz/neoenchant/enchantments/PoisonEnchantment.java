@@ -1,4 +1,4 @@
-package fr.neoxz.neoenchant.enchantments;
+package fr.dyooneoxz.neoenchant.enchantments;
 
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -51,7 +51,7 @@ public class PoisonEnchantment extends Enchantment {
 
     @Override
     protected boolean checkCompatibility(Enchantment other) {
-        if (other == Enchantments.FIRE_ASPECT) {
+        if (other == Enchantments.FIRE_ASPECT || other instanceof FrostEnchantment) {
             return false;
         }
         return super.checkCompatibility(other);

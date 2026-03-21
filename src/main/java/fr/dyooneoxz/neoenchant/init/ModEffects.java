@@ -1,7 +1,7 @@
-package fr.neoxz.neoenchant.init;
+package fr.dyooneoxz.neoenchant.init;
 
-import fr.neoxz.neoenchant.NeoEnchant;
-import fr.neoxz.neoenchant.effects.FrostEffect;
+import fr.dyooneoxz.neoenchant.NeoEnchant;
+import fr.dyooneoxz.neoenchant.effects.FrostEffect;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
