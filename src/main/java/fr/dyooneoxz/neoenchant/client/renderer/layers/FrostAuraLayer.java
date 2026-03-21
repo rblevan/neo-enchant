@@ -27,21 +27,21 @@ public class FrostAuraLayer<T extends LivingEntity, M extends EntityModel<T>> ex
     @Override
     public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, T entity, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        if (!entity.hasEffect(ModEffects.FROST.get())) {
+        if (!entity.isFullyFrozen()) {
             return;
         }
 
         M model = this.getParentModel();
 
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.beaconBeam(FROST_AURA_TEXTURE, true));
+        float xOffset = (ageInTicks * 0.005F) % 1.0F;
+        float yOffset = (ageInTicks * 0.005F) % 1.0F;
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.energySwirl(FROST_AURA_TEXTURE, xOffset, yOffset));
 
         poseStack.pushPose();
 
-        float scale = 1.01F;
+        float scale = 1.05F;
         poseStack.scale(scale, scale, scale);
-
-        model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.5F);
-
+        model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.8F);
         poseStack.popPose();
     }
 }

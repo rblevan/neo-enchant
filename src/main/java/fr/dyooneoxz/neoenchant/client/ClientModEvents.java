@@ -1,9 +1,11 @@
 package fr.dyooneoxz.neoenchant.client;
 
 import fr.dyooneoxz.neoenchant.client.renderer.layers.FrostAuraLayer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,23 +23,25 @@ public class ClientModEvents {
                 playerRenderer.addLayer(new FrostAuraLayer<>(playerRenderer));
             }
         }
-        for (EntityType<?> type : ForgeRegistries.ENTITY_TYPES) {
-            if (type == EntityType.PLAYER) continue;
 
-            addLayerToMobSafe(event, type);
+
+        for (EntityType<?> type : ForgeRegistries.ENTITY_TYPES) {
+           if (type != EntityType.PLAYER) {
+               addLayerToMob(event, type);
+           }
         }
     }
 
+
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void addLayerToMobSafe(EntityRenderersEvent.AddLayers event, EntityType<?> type) {
-        try {
-            Object renderer = event.getRenderer((EntityType) type);
-            if (renderer instanceof LivingEntityRenderer) {
-                LivingEntityRenderer livingRenderer = (LivingEntityRenderer) renderer;
+    private static void addLayerToMob(EntityRenderersEvent.AddLayers event, EntityType<?> type) {
+       try {
+           Object renderer = event.getRenderer((EntityType) type);
+            if (renderer instanceof LivingEntityRenderer livingRenderer) {
                 livingRenderer.addLayer(new FrostAuraLayer(livingRenderer));
             }
-        } catch (Exception e) {
-            // Si une entité moddée bizarre panique, on l'ignore en silence pour ne pas crasher le jeu
+        } catch (ClassCastException e) {
+            // Ignore
         }
     }
 }

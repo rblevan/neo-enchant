@@ -21,8 +21,11 @@ public class FrostEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        if (!entity.level().isClientSide() && entity.tickCount % 20 == 0) {
-            entity.hurt(entity.damageSources().freeze(), 0.5F);
+        if (!entity.level().isClientSide()) {
+            entity.setTicksFrozen(entity.getTicksRequiredToFreeze() + 5);
+            if (entity.tickCount % 20 == 0) {
+                entity.hurt(entity.damageSources().freeze(), 0.5F);
+            }
         }
     }
 
