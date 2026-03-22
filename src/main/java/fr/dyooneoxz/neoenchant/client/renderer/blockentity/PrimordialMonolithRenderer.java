@@ -34,7 +34,7 @@ public class PrimordialMonolithRenderer implements BlockEntityRenderer<Primordia
 
         poseStack.translate(0.5D, 1.12D, 0.5D);
 
-        float scale = 0.5F;
+        float scale = 0.65F;
         poseStack.scale(scale, scale, scale);
 
         float time = blockEntity.getLevel().getGameTime() + partialTick;
