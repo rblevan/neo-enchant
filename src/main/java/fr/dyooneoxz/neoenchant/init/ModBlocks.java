@@ -14,7 +14,6 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, NeoEnchant.MODID);
 
-    // Déclaration de notre Autel
     public static final RegistryObject<Block> PRIMORDIAL_MONOLITH = BLOCKS.register("primordial_monolith",
             () -> new PrimordialMonolithBlock(BlockBehaviour.Properties.copy(Blocks.ENCHANTING_TABLE)));
 

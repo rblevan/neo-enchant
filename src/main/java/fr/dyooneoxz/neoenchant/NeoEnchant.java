@@ -2,10 +2,7 @@ package fr.dyooneoxz.neoenchant;
 
 import com.mojang.logging.LogUtils;
 import fr.dyooneoxz.neoenchant.client.ClientModEvents;
-import fr.dyooneoxz.neoenchant.init.ModBlockEntities;
-import fr.dyooneoxz.neoenchant.init.ModEffects;
-import fr.dyooneoxz.neoenchant.init.ModEnchantments;
-import fr.dyooneoxz.neoenchant.init.ModMenuTypes;
+import fr.dyooneoxz.neoenchant.init.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -28,7 +25,10 @@ public class NeoEnchant
 
         ModEnchantments.register(modEventBus);
         ModEffects.register(modEventBus);
+
+        ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+        ModItems.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         //if (FMLEnvironment.dist == Dist.CLIENT) {
         //    MinecraftForge.EVENT_BUS.register(ClientModEvents.class);

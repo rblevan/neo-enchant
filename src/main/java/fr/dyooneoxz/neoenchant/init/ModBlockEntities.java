@@ -13,7 +13,7 @@ public class ModBlockEntities {
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, NeoEnchant.MODID);
 
     public static final RegistryObject<BlockEntityType<PrimordialMonolithBlockEntity>> PRIMORDIAL_MONOLITH_BE =
-            BLOCK_ENTITIES.register("primordial_monolith_be", () ->
+            BLOCK_ENTITIES.register("primordial_monolith", () ->
                     BlockEntityType.Builder.of(PrimordialMonolithBlockEntity::new,
                             ModBlocks.PRIMORDIAL_MONOLITH.get()).build(null));
 
