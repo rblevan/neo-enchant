@@ -1,22 +1,22 @@
 package fr.dyooneoxz.neoenchant.enchantments;
 
-import fr.dyooneoxz.neoenchant.init.ModEffects;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.BowItem;
 
-
-public class FrostEnchantment extends Enchantment {
+public class PoisonStrikeEnchantment extends Enchantment {
 
     // Constructors
 
-    public FrostEnchantment() {
+    public PoisonStrikeEnchantment() {
         super(
                 Rarity.RARE,
                 EnchantmentCategory.WEAPON,
@@ -30,6 +30,11 @@ public class FrostEnchantment extends Enchantment {
 
     @Override
     public int getMaxLevel() {
+        return 2;
+    }
+
+    @Override
+    public int getMinLevel() {
         return 1;
     }
 
@@ -37,26 +42,26 @@ public class FrostEnchantment extends Enchantment {
 
     @Override
     public int getMinCost(int level) {
-        return 20;
+        return 10 + 20 * (level - 1);
     }
 
     @Override
     public int getMaxCost(int level) {
-        return 50;
+        return super.getMinCost(level) + 10;
     }
 
     // -- APPLIABLE TO SWORDS AND AXES -- //
 
     @Override
     public boolean canEnchant(ItemStack stack) {
-        return stack.getItem() instanceof BowItem;
+        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }
 
-    // -- IMCOMPATIBLE WITH FIRE ASPECT AND POISON STRIKES -- //
+    // -- IMCOMPATIBLE WITH FIRE ASPECT AND FROST ASPECT -- //
 
     @Override
     protected boolean checkCompatibility(Enchantment other) {
-        if (other == Enchantments.FLAMING_ARROWS) {
+        if (other == Enchantments.FIRE_ASPECT || other instanceof FrostAspectEnchantment) {
             return false;
         }
         return super.checkCompatibility(other);
@@ -69,14 +74,17 @@ public class FrostEnchantment extends Enchantment {
 
         super.doPostAttack(attacker, target, level);
 
-        if (!attacker.level().isClientSide() && target instanceof LivingEntity) {
+        if (!attacker.level().isClientSide()) {
+            if (target instanceof LivingEntity) {
 
-            LivingEntity livingTarget = (LivingEntity) target;
+                LivingEntity livingTarget = (LivingEntity) target;
 
-            int duration = level * 80;
+                int duration = level * 80;
 
-            livingTarget.addEffect(new MobEffectInstance(ModEffects.FROST.get(), duration, level - 1, false, false, true));
+                livingTarget.addEffect(new MobEffectInstance(MobEffects.POISON, duration, level - 1));
 
+            }
         }
     }
 }
+

@@ -1,5 +1,6 @@
 {
   "enchantment.neoenchant.poison_strike": "Toucher Empoisonnée",
   "enchantment.neoenchant.frost_aspect": "Aura de Glace",
-  "effect.neoenchant.frost": "Givre"
+  "effect.neoenchant.frost": "Givre",
+  "enchantment.neoenchant.frost": "Givre"
 }

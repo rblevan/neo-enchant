@@ -1,19 +1,23 @@
 package fr.dyooneoxz.neoenchant.enchantments;
 
+import fr.dyooneoxz.neoenchant.init.ModEffects;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
 
-public class PoisonEnchantment extends Enchantment {
+
+public class FrostAspectEnchantment extends Enchantment {
 
     // Constructors
 
-    public PoisonEnchantment() {
+    public FrostAspectEnchantment() {
         super(
                 Rarity.RARE,
                 EnchantmentCategory.WEAPON,
@@ -47,11 +51,18 @@ public class PoisonEnchantment extends Enchantment {
         return super.getMinCost(level) + 10;
     }
 
-    // -- IMCOMPATIBLE WITH FIRE ASPECT -- //
+    // -- APPLIABLE TO SWORDS AND AXES -- //
+
+    @Override
+    public boolean canEnchant(ItemStack stack) {
+        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
+    }
+
+    // -- IMCOMPATIBLE WITH FIRE ASPECT AND POISON STRIKES -- //
 
     @Override
     protected boolean checkCompatibility(Enchantment other) {
-        if (other == Enchantments.FIRE_ASPECT || other instanceof FrostEnchantment) {
+        if (other == Enchantments.FIRE_ASPECT || other instanceof PoisonStrikeEnchantment) {
             return false;
         }
         return super.checkCompatibility(other);
@@ -64,17 +75,14 @@ public class PoisonEnchantment extends Enchantment {
 
         super.doPostAttack(attacker, target, level);
 
-        if (!attacker.level().isClientSide()) {
-            if (target instanceof LivingEntity) {
+        if (!attacker.level().isClientSide() && target instanceof LivingEntity) {
 
-                LivingEntity livingTarget = (LivingEntity) target;
+            LivingEntity livingTarget = (LivingEntity) target;
 
-                int duration = level * 80;
+            int duration = level * 80;
 
-                livingTarget.addEffect(new MobEffectInstance(MobEffects.POISON, duration, level - 1));
+            livingTarget.addEffect(new MobEffectInstance(ModEffects.FROST.get(), duration, level - 1, false, false, true));
 
-            }
         }
     }
 }
-

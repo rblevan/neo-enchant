@@ -1,8 +1,9 @@
 package fr.dyooneoxz.neoenchant.init;
 
 import fr.dyooneoxz.neoenchant.NeoEnchant;
+import fr.dyooneoxz.neoenchant.enchantments.FrostAspectEnchantment;
 import fr.dyooneoxz.neoenchant.enchantments.FrostEnchantment;
-import fr.dyooneoxz.neoenchant.enchantments.PoisonEnchantment;
+import fr.dyooneoxz.neoenchant.enchantments.PoisonStrikeEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -15,10 +16,13 @@ public class ModEnchantments {
             DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, NeoEnchant.MODID);
 
     public static final RegistryObject<Enchantment> POISON_STRIKE =
-            ENCHANTMENTS.register("poison_strike", () -> new PoisonEnchantment());
+            ENCHANTMENTS.register("poison_strike", PoisonStrikeEnchantment::new);
 
     public static final RegistryObject<Enchantment> FROST_ASPECT =
-            ENCHANTMENTS.register("frost_aspect", () -> new FrostEnchantment());
+            ENCHANTMENTS.register("frost_aspect", FrostAspectEnchantment::new);
+
+    public static final RegistryObject<Enchantment> FROST =
+            ENCHANTMENTS.register("frost", FrostEnchantment::new);
 
     public static void register(IEventBus eventBus) {
         ENCHANTMENTS.register(eventBus);

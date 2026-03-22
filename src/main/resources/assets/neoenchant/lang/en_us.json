@@ -1,5 +1,6 @@
 {
   "enchantment.neoenchant.poison_strike": "Poison Strike",
   "enchantment.neoenchant.frost_aspect": "Frost Aspect",
-  "effect.neoenchant.frost": "Frost"
+  "effect.neoenchant.frost": "Frost",
+  "enchantment.neoenchant.frost": "Frost"
 }
