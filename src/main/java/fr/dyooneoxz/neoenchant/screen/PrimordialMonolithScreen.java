@@ -17,14 +17,20 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
 
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(NeoEnchant.MODID, "textures/gui/primordial_monolith_gui.png");
+
     private static final Style RUNIC_STYLE = Style.EMPTY.withFont(new ResourceLocation("minecraft", "alt"));
 
-    private final int[] buttonPosX = {9, 90};
-    private final int[] buttonPosY = {13, 43};
+    private final int[] buttonPosX = {9, 110, 9, 110};
+    private final int[] buttonPosY = {13, 13, 43, 43};
 
-    private static final int BTN_WIDTH = 54;
-    private static final int BTN_HEIGHT = 24;
+    private final int[] costPosX = {66, 90, 66, 90};
+    private final int[] costPosY = {13, 13, 54, 54};
 
+    private static final int BTN_WIDTH = 57;
+    private static final int BTN_HEIGHT = 25;
+
+    private static final int BOX_WIDTH = 19;
+    private static final int BOX_HEIGHT = 13;
 
     public PrimordialMonolithScreen(PrimordialMonolithMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -49,65 +55,46 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
 
         guiGraphics.blit(TEXTURE, x, y, imageWidth, imageHeight, 0, 0, 352, 332, 352, 332);
 
-        // --- DESSIN DES 4 BOUTONS ---
-        // ATTENTION : Tu devras sûrement modifier ces deux valeurs (60 et 14) pour
-        // aligner les boutons avec le dessin de ton interface personnalisée !
-        int buttonX = x + 9;
-        int buttonStartY = y + 13;
-
         EnchantmentNames.getInstance().initSeed(this.menu.enchantSeed.get());
 
         for (int i = 0; i < 4; ++i) {
             int cost = this.menu.costs[i];
 
-            if (cost > 0) { // Si l'enchantement est disponible
-                // On récupère tes coordonnées personnalisées pour ce bouton précis
+            if (cost > 0) {
                 int btnX = x + buttonPosX[i];
                 int btnY = y + buttonPosY[i];
 
-                // La souris est-elle sur ce bouton ?
                 boolean isHovering = mouseX >= btnX && mouseX < btnX + BTN_WIDTH && mouseY >= btnY && mouseY < btnY + BTN_HEIGHT;
 
-                // Si survolé, on décale la lecture de l'image vers le bas pour afficher le bouton illuminé
-                int vOffset = isHovering ? BTN_HEIGHT : 0;
-
-                // On dessine ton bouton personnalisé ! (Les deux derniers paramètres sont la taille totale de ton fichier monolith_button.png)
-                guiGraphics.blit(BTN_TEXTURE, btnX, btnY, BTN_WIDTH, BTN_HEIGHT, 0, vOffset, BTN_WIDTH, BTN_HEIGHT * 2, BTN_WIDTH, BTN_HEIGHT * 2);
-
-                // --- GESTION DU TEXTE SANS DÉPASSEMENT ---
-                String runicText = String.valueOf(EnchantmentNames.getInstance().getRandomName(this.font, 86));
-                String costText = String.valueOf(cost);
-
-                // Espace disponible pour le texte (Largeur du bouton - la place prise par le coût - marges)
-                int maxTextWidth = BTN_WIDTH - this.font.width(costText) - 10;
-                int actualTextWidth = this.font.width(runicText);
-
-                // Sauvegarde l'état du pinceau
-                guiGraphics.pose().pushPose();
-
-                // Si le texte est plus grand que la place dispo, on calcule le pourcentage de réduction
-                float scale = 1.0F;
-                if (actualTextWidth > maxTextWidth) {
-                    scale = (float) maxTextWidth / (float) actualTextWidth;
+                if (isHovering) {
+                    guiGraphics.fill(btnX, btnY, btnX + BTN_WIDTH, btnY + BTN_HEIGHT, 0x40FFFFFF);
                 }
 
-                // On applique la réduction (et on déplace le point de départ pour compenser le rétrécissement)
-                guiGraphics.pose().translate(btnX + 4, btnY + (BTN_HEIGHT / 2.0F) - 4, 0);
-                guiGraphics.pose().scale(scale, scale, 1.0F);
+                String runicText = String.valueOf(EnchantmentNames.getInstance().getRandomName(this.font, BTN_WIDTH * 2));
 
-                // On dessine le texte runique (En jaune clair si survolé, sinon couleur parchemin sombre)
-                FormattedText formattedRunic = FormattedText.of(runicText, RUNIC_STYLE);
-                guiGraphics.drawString(this.font, runicText, 0, 0, isHovering ? 0xFFFF80 : 0x3d3522, false);
+                java.util.List<net.minecraft.util.FormattedCharSequence> lines =
+                        this.font.split(FormattedText.of(runicText, RUNIC_STYLE), BTN_WIDTH - 4);
 
-                // On restaure le pinceau à sa taille normale
-                guiGraphics.pose().popPose();
+                int maxLines = BTN_HEIGHT / this.font.lineHeight;
 
-                // On dessine le coût à la fin du bouton
-                guiGraphics.drawString(this.font, costText, btnX + BTN_WIDTH - this.font.width(costText) - 4, btnY + (BTN_HEIGHT / 2) - 4, 0x80FF20, false);
+                for (int line = 0; line < Math.min(lines.size(), maxLines); line++) {
+                    guiGraphics.drawString(this.font, lines.get(line), btnX + 2, btnY + 1 + (line * this.font.lineHeight), isHovering ? 0x8CFFFB : 0xffca18, true);
+                }
+
+                String costText = String.valueOf(cost);
+
+                int currentCostX = x + costPosX[i];
+                int currentCostY = y + costPosY[i];
+
+                int textWidth = this.font.width(costText);
+
+                int centeredX = currentCostX + (BOX_WIDTH / 2) - (textWidth / 2);
+                int centeredY = currentCostY + (BOX_HEIGHT / 2) - (this.font.lineHeight / 2);
+
+                guiGraphics.drawString(this.font, costText, centeredX, centeredY, 0x8CFFFB, true);
             }
         }
     }
-
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         int x = (width - imageWidth) / 2;
@@ -117,7 +104,6 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
             int btnX = x + buttonPosX[i];
             int btnY = y + buttonPosY[i];
 
-            // Si le joueur clique dans les limites de ton bouton
             if (pMouseX >= btnX && pMouseX < btnX + BTN_WIDTH && pMouseY >= btnY && pMouseY < btnY + BTN_HEIGHT) {
                 if (this.menu.clickMenuButton(this.minecraft.player, i)) {
                     this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, i);
