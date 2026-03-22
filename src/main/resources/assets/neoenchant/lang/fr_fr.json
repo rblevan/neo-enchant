@@ -2,5 +2,6 @@
   "enchantment.neoenchant.poison_strike": "Toucher Empoisonnée",
   "enchantment.neoenchant.frost_aspect": "Aura de Glace",
   "effect.neoenchant.frost": "Givre",
-  "enchantment.neoenchant.frost": "Givre"
+  "enchantment.neoenchant.frost": "Givre",
+  "block.neoenchant.primordial_monolith": "Monolithe Primordial"
 }

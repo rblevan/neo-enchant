@@ -19,49 +19,43 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
     public final PrimordialMonolithBlockEntity blockEntity;
     private final ContainerLevelAccess levelAccess;
 
-    // Constructeur appelé par le Client
     public PrimordialMonolithMenu(int containerId, Inventory playerInventory, FriendlyByteBuf extraData) {
         this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(extraData.readBlockPos()));
     }
 
-    // Constructeur appelé par le Serveur
     public PrimordialMonolithMenu(int containerId, Inventory playerInventory, BlockEntity entity) {
         super(ModMenuTypes.PRIMORDIAL_MONOLITH_MENU.get(), containerId);
-        checkContainerSize(playerInventory, 2); // On a 2 slots dans notre bloc
+        checkContainerSize(playerInventory, 2);
         this.blockEntity = (PrimordialMonolithBlockEntity) entity;
         this.levelAccess = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 141, 66));
-            this.addSlot(new SlotItemHandler(iItemHandler, 1, 180, 66));
+            this.addSlot(new SlotItemHandler(iItemHandler, 0, 70, 33));
+            this.addSlot(new SlotItemHandler(iItemHandler, 1, 90, 33));
         });
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
     }
 
-    // Autorise le joueur à utiliser ce menu seulement s'il est proche du bloc
     @Override
     public boolean stillValid(@NotNull Player player) {
         return stillValid(levelAccess, player, ModBlocks.PRIMORDIAL_MONOLITH.get());
     }
 
-    // Dessine l'inventaire du joueur (Les maths standards de Minecraft)
     private void addPlayerInventory(Inventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 16 + l * 18, 168 + i * 18));
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
             }
         }
     }
 
-    // Dessine la barre d'action du joueur
     private void addPlayerHotbar(Inventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 16 + i * 18, 284));
+            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
     }
 
-    // Gère le "Shift-Clic" pour transférer rapidement les objets
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
         Slot sourceSlot = slots.get(index);

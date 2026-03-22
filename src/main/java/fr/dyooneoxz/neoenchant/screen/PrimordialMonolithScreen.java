@@ -17,8 +17,8 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
 
     public PrimordialMonolithScreen(PrimordialMonolithMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
-        this.imageWidth = 352;
-        this.imageHeight = 332;
+        this.imageWidth = 176;
+        this.imageHeight = 166;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight, 352, 332);
+        guiGraphics.blit(TEXTURE, x, y, imageWidth, imageHeight, 0, 0, 352, 332, 352, 332);
     }
 
     @Override

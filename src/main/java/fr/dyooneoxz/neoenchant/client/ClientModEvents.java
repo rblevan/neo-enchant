@@ -1,6 +1,8 @@
 package fr.dyooneoxz.neoenchant.client;
 
+import fr.dyooneoxz.neoenchant.client.renderer.blockentity.PrimordialMonolithRenderer;
 import fr.dyooneoxz.neoenchant.client.renderer.layers.FrostAuraLayer;
+import fr.dyooneoxz.neoenchant.init.ModBlockEntities;
 import fr.dyooneoxz.neoenchant.init.ModMenuTypes;
 import fr.dyooneoxz.neoenchant.screen.PrimordialMonolithScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -52,5 +54,10 @@ public class ClientModEvents {
         event.enqueueWork(() -> {
             MenuScreens.register(ModMenuTypes.PRIMORDIAL_MONOLITH_MENU.get(), PrimordialMonolithScreen::new);
         });
+    }
+
+    @SubscribeEvent
+    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(ModBlockEntities.PRIMORDIAL_MONOLITH_BE.get(), PrimordialMonolithRenderer::new);
     }
 }
