@@ -1,6 +1,9 @@
 package fr.dyooneoxz.neoenchant.client;
 
 import fr.dyooneoxz.neoenchant.client.renderer.layers.FrostAuraLayer;
+import fr.dyooneoxz.neoenchant.init.ModMenuTypes;
+import fr.dyooneoxz.neoenchant.screen.PrimordialMonolithScreen;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.EntityType;
@@ -8,6 +11,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber(modid = fr.dyooneoxz.neoenchant.NeoEnchant.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -41,5 +45,12 @@ public class ClientModEvents {
         } catch (ClassCastException e) {
             // Ignore
         }
+    }
+
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            MenuScreens.register(ModMenuTypes.PRIMORDIAL_MONOLITH_MENU.get(), PrimordialMonolithScreen::new);
+        });
     }
 }
