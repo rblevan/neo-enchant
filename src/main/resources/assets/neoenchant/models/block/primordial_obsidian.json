@@ -1,0 +1,6 @@
+{
+  "parent": "neoenchant:block/cube_all",
+  "textures": {
+    "all": "neoenchant:block/primordial_obsidian"
+  }
+}
