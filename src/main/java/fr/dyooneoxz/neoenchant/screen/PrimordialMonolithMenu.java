@@ -136,10 +136,10 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
         for (int x = -3; x <= 3; x++) {
             for (int z = -3; z <= 3; z++) {
                 for (int y = -2 ; y <= 2; y++) {
-                    if (Math.abs(x) < 2 && Math.abs(z) < 2) continue;
+                    if (Math.abs(x) < 3 && Math.abs(z) < 3) continue;
                     net.minecraft.core.BlockPos checkPos = center.offset(x, y, z);
 
-                    if(!level.getBlockState(checkPos).is(ModBlocks.PRIMORDIAL_OBSIDIAN.get())) {
+                    if(level.getBlockState(checkPos).is(ModBlocks.PRIMORDIAL_OBSIDIAN.get())) {
                         power = power + 2;
                     }
                     if (level.getBlockState(checkPos).is(Blocks.NETHERITE_BLOCK)) {
@@ -178,13 +178,24 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
             int bonus = (int)(powerBlocks * 2.5);
 
             int cost0 = random.nextInt(10) + 10 + (int)(bonus * 0.55);
-            costs[0] = Math.min(cost0, 47);
             int cost1 = random.nextInt(15) + 20 + (int)(bonus * 0.65);
-            costs[1] = Math.min(cost1, 65);
             int cost2 = random.nextInt(20) + 35 + (int)(bonus * 0.8);
-            costs[2] = Math.min(cost2, 82);
             int cost3 = random.nextInt(25) + 50 + bonus;
-            costs[3] = Math.min(cost3, 100);
+
+            costs[0] = Math.min(cost0, 47);
+            costs[1] = Math.min(cost1, 65);
+
+            if (powerBlocks >= 5.0f || random.nextFloat() > 0.5f) {
+                costs[2] = Math.min(cost2, 82);
+                if (powerBlocks >= 12.0f || random.nextFloat() > 0.8f) {
+                    costs[3] = Math.min(cost3, 100);
+                } else {
+                    costs[3] = 0;
+                }
+            } else {
+                costs[2] = 0;
+                costs[3] = 0;
+            }
 
             this.broadcastFullState();
         }
@@ -229,21 +240,28 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
         return false;
     }
 
-    private java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> getCustomEnchantments(ItemStack stack, int powerLevel, net.minecraft.util.RandomSource random) {
+    private java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> getCustomEnchantments(net.minecraft.world.item.ItemStack stack, int powerLevel, net.minecraft.util.RandomSource random) {
         java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> list = new java.util.ArrayList<>();
         java.util.List<net.minecraft.world.item.enchantment.Enchantment> possibleEnchants = new java.util.ArrayList<>();
-        for (net.minecraft.world.item.enchantment.Enchantment enchantment : net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues()) {
-            if (enchantment.isCurse()) {
-                continue;
-            }
 
+        for (net.minecraft.world.item.enchantment.Enchantment enchantment : net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues()) {
+            if (enchantment.isCurse()) continue;
             if (enchantment.canEnchant(stack)) {
                 net.minecraft.resources.ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
-                if (registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID)) {
+                boolean isCustom = registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
+                if (isCustom) {
+                    if (powerLevel <= 66) continue;
+                    float customChance = powerLevel >= 85 ? 0.35f : 0.15f;
+                    if (random.nextFloat() > customChance) continue;
+                }
 
-                    if (random.nextFloat() > 0.05f) {
-                        continue;
-                    }
+                // mending
+                if (enchantment == net.minecraft.world.item.enchantment.Enchantments.MENDING) {
+                    float mendingChance = powerLevel <= 30 ? 0.01f :
+                            powerLevel <= 48 ? 0.03f :
+                                    powerLevel <= 66 ? 0.08f :
+                                            powerLevel <= 84 ? 0.15f : 0.25f;
+                    if (random.nextFloat() > mendingChance) continue;
                 }
 
                 possibleEnchants.add(enchantment);
@@ -251,16 +269,66 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
         }
 
         if (possibleEnchants.isEmpty()) return list;
-
-        int enchantCount;
-        if (powerLevel >= 80) {
-            enchantCount = 2 + random.nextInt(3);
-        } else if (powerLevel >= 50) {
-            enchantCount = 1 + random.nextInt(3);
-        } else {
-            enchantCount = 1 + random.nextInt(2);
-        }
         java.util.Collections.shuffle(possibleEnchants, new java.util.Random(random.nextInt()));
+
+        int enchantCount = 1;
+        boolean allowMaxLevel = true;
+        boolean forceOneMaxLevel = false;
+        boolean forceAllMaxLevel = false;
+
+        int roll = random.nextInt(100);
+
+        if (powerLevel <= 30) {
+            enchantCount = 1 + random.nextInt(2);
+            allowMaxLevel = false;
+        }
+        else if (powerLevel <= 48) {
+            if (roll < 2) {
+                enchantCount = 4 + random.nextInt(2);
+                allowMaxLevel = false;
+            } else if (roll < 10) {
+                enchantCount = 2 + random.nextInt(2);
+                forceOneMaxLevel = true;
+                allowMaxLevel = false;
+            } else if (roll < 20) {
+                enchantCount = 2 + random.nextInt(2);
+                allowMaxLevel = true;
+            } else {
+                enchantCount = 1 + random.nextInt(2);
+                allowMaxLevel = false;
+            }
+        }
+        else if (powerLevel <= 66) {
+            if (roll < 5) { // 5%
+                enchantCount = 5 + random.nextInt(2);
+                allowMaxLevel = false;
+            } else if (roll < 20) { // 15%
+                enchantCount = 3 + random.nextInt(2);
+                forceOneMaxLevel = true;
+                allowMaxLevel = false;
+            } else if (roll < 50) { // 30%
+                enchantCount = 3 + random.nextInt(2);
+                allowMaxLevel = true;
+            } else { // 50%
+                enchantCount = 2 + random.nextInt(2);
+                allowMaxLevel = false;
+            }
+        }
+        else if (powerLevel <= 84) {
+            enchantCount = 3 + random.nextInt(3); // 3 à 5 enchants
+            allowMaxLevel = true;
+        }
+        else {
+            if (roll < 20) {
+                enchantCount = 3;
+                forceAllMaxLevel = true;
+            } else {
+                enchantCount = 4 + random.nextInt(4);
+                allowMaxLevel = true;
+            }
+        }
+
+        boolean hasAssignedMax = false;
 
         for (net.minecraft.world.item.enchantment.Enchantment enchantment : possibleEnchants) {
             if (list.size() >= enchantCount) break;
@@ -271,18 +339,42 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                     break;
                 }
             }
+
             if (isCompatible) {
                 int maxLevel = enchantment.getMaxLevel();
                 int levelToApply = 1;
+
+                net.minecraft.resources.ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+                boolean isCustom = registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
+
+                // ex: mending
                 if (maxLevel > 1) {
-                    if (powerLevel >= 80) {
+                    if (forceAllMaxLevel) {
                         levelToApply = maxLevel;
-                    } else if (powerLevel >= 50) {
-                        levelToApply = Math.max(1, maxLevel - random.nextInt(2));
+                    } else if (forceOneMaxLevel && !hasAssignedMax && !isCustom) {
+                        levelToApply = maxLevel;
+                        hasAssignedMax = true;
                     } else {
-                        levelToApply = random.nextInt(maxLevel) + 1;
+                        if (isCustom) {
+                            if (powerLevel <= 84) {
+                                levelToApply = Math.max(1, random.nextInt(maxLevel));
+                            } else {
+                                levelToApply = Math.max(1, maxLevel - random.nextInt(2));
+                            }
+                        } else {
+                            if (!allowMaxLevel) {
+                                levelToApply = Math.max(1, random.nextInt(maxLevel));
+                            } else {
+                                if (powerLevel >= 85) {
+                                    levelToApply = Math.max(1, maxLevel - random.nextInt(2));
+                                } else {
+                                    levelToApply = random.nextInt(maxLevel) + 1;
+                                }
+                            }
+                        }
                     }
                 }
+
                 list.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(enchantment, levelToApply));
             }
         }

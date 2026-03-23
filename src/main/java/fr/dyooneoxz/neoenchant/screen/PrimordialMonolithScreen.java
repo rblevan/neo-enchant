@@ -17,6 +17,10 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
 
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(NeoEnchant.MODID, "textures/gui/primordial_monolith_gui.png");
+    private static final ResourceLocation ACTIVE_BUTTON_TEXTURE =
+            new ResourceLocation(NeoEnchant.MODID, "textures/gui/active_btn_bg.png");
+    private static final ResourceLocation ACTIVE_COST_TEXTURE =
+            new ResourceLocation(NeoEnchant.MODID, "textures/gui/active_cost_bg.png");
 
     private static final Style RUNIC_STYLE = Style.EMPTY.withFont(new ResourceLocation("minecraft", "alt"));
 
@@ -29,8 +33,8 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
     private static final int BTN_WIDTH = 57;
     private static final int BTN_HEIGHT = 25;
 
-    private static final int BOX_WIDTH = 19;
-    private static final int BOX_HEIGHT = 13;
+    private static final int BOX_WIDTH = 20;
+    private static final int BOX_HEIGHT = 14;
 
     public PrimordialMonolithScreen(PrimordialMonolithMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -63,6 +67,11 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
             if (cost > 0) {
                 int btnX = x + buttonPosX[i];
                 int btnY = y + buttonPosY[i];
+                int currentCostX = x + costPosX[i];
+                int currentCostY = y + costPosY[i];
+
+                guiGraphics.blit(ACTIVE_BUTTON_TEXTURE, btnX, btnY, BTN_WIDTH, BTN_HEIGHT, 0.0F, 0.0F, BTN_WIDTH * 10, BTN_HEIGHT * 10, BTN_WIDTH * 10, BTN_HEIGHT * 10);
+                guiGraphics.blit(ACTIVE_COST_TEXTURE, currentCostX, currentCostY, BOX_WIDTH, BOX_HEIGHT, 0.0F, 0.0F, BOX_WIDTH * 10, BOX_HEIGHT * 10, BOX_WIDTH * 10, BOX_HEIGHT * 10);
 
                 boolean isHovering = mouseX >= btnX && mouseX < btnX + BTN_WIDTH && mouseY >= btnY && mouseY < btnY + BTN_HEIGHT;
 
@@ -82,9 +91,6 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
                 }
 
                 String costText = String.valueOf(cost);
-
-                int currentCostX = x + costPosX[i];
-                int currentCostY = y + costPosY[i];
 
                 int textWidth = this.font.width(costText);
 
