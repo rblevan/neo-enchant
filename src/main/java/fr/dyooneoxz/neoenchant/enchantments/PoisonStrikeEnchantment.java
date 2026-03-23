@@ -67,6 +67,21 @@ public class PoisonStrikeEnchantment extends Enchantment {
         return super.checkCompatibility(other);
     }
 
+    @Override
+    public boolean isTreasureOnly() {
+        return true;
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return false;
+    }
+
+    @Override
+    public boolean isTradeable() {
+        return false;
+    }
+
     // -- EFFECT LOGIC -- //
 
     @Override

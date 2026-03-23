@@ -4,5 +4,7 @@
   "effect.neoenchant.frost": "Givre",
   "enchantment.neoenchant.frost": "Givre",
   "block.neoenchant.primordial_monolith": "Monolithe Primordial",
-  "block.neoenchant.primordial_obsidian": "Obsidienne Primordiale"
+  "block.neoenchant.primordial_obsidian": "Obsidienne Primordiale",
+  "enchantment.neoenchant.timber": "Abattage",
+  "enchantment.neoenchant.mineral_echo": "Écho Minéral"
 }

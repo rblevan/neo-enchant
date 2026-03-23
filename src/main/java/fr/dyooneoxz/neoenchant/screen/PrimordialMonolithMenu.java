@@ -94,24 +94,53 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
         Slot sourceSlot = slots.get(index);
-        if (!sourceSlot.hasItem()) return ItemStack.EMPTY;
+        if (sourceSlot == null || !sourceSlot.hasItem()) return ItemStack.EMPTY;
 
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
-        if (index < 36) {
-            if (!moveItemStackTo(sourceStack, 36, 38, false)) { // Vers les 2 cases du Monolithe
+        if (index == 0 || index == 1) {
+            if (!this.moveItemStackTo(sourceStack, 2, 38, true)) {
                 return ItemStack.EMPTY;
             }
-        } else if (index < 38) {
-            if (!moveItemStackTo(sourceStack, 0, 36, false)) { // Vers l'inventaire du joueur
-                return ItemStack.EMPTY;
+            sourceSlot.onQuickCraft(sourceStack, copyOfSourceStack);
+        }
+        else {
+            if (sourceStack.getItem() == net.minecraft.world.item.Items.LAPIS_BLOCK) {
+                if (!this.moveItemStackTo(sourceStack, 1, 2, false)) {
+                    if (index < 29) {
+                        if (!this.moveItemStackTo(sourceStack, 29, 38, false)) return ItemStack.EMPTY;
+                    } else if (!this.moveItemStackTo(sourceStack, 2, 29, false)) return ItemStack.EMPTY; // Hotbar vers inventaire
+                }
             }
-        } else { return ItemStack.EMPTY; }
+            else if (sourceStack.isEnchantable()) {
+                if (!this.moveItemStackTo(sourceStack, 0, 1, false)) {
+                    if (index < 29) {
+                        if (!this.moveItemStackTo(sourceStack, 29, 38, false)) return ItemStack.EMPTY;
+                    } else if (!this.moveItemStackTo(sourceStack, 2, 29, false)) return ItemStack.EMPTY;
+                }
+            }
+            else {
+                if (index < 29) {
+                    if (!this.moveItemStackTo(sourceStack, 29, 38, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index >= 29 && index < 38) {
+                    if (!this.moveItemStackTo(sourceStack, 2, 29, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+            }
+        }
 
-        if (sourceStack.getCount() == 0) { sourceSlot.set(ItemStack.EMPTY); }
-        else { sourceSlot.setChanged(); }
-
+        if (sourceStack.getCount() == 0) {
+            sourceSlot.set(ItemStack.EMPTY);
+        } else {
+            sourceSlot.setChanged();
+        }
+        if (sourceStack.getCount() == copyOfSourceStack.getCount()) {
+            return ItemStack.EMPTY;
+        }
         sourceSlot.onTake(player, sourceStack);
         return copyOfSourceStack;
     }
@@ -251,7 +280,7 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                 boolean isCustom = registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
                 if (isCustom) {
                     if (powerLevel <= 66) continue;
-                    float customChance = powerLevel >= 85 ? 0.35f : 0.15f;
+                    float customChance = powerLevel >= 85 ? 0.05f : 0.02f;
                     if (random.nextFloat() > customChance) continue;
                 }
 
