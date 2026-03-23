@@ -19,8 +19,7 @@ public class NeoEnchant
     public static final String MODID = "neoenchant";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public NeoEnchant()
-    {
+    public NeoEnchant() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModEnchantments.register(modEventBus);
@@ -30,6 +29,7 @@ public class NeoEnchant
         ModBlockEntities.register(modEventBus);
         ModItems.register(modEventBus);
         ModMenuTypes.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
         //if (FMLEnvironment.dist == Dist.CLIENT) {
         //    MinecraftForge.EVENT_BUS.register(ClientModEvents.class);
         //}
@@ -38,6 +38,16 @@ public class NeoEnchant
         MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
+    }
+
+    private void addCreative(net.minecraftforge.event.BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == net.minecraft.world.item.CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(fr.dyooneoxz.neoenchant.init.ModBlocks.PRIMORDIAL_MONOLITH.get());
+        }
+
+        if (event.getTabKey() == net.minecraft.world.item.CreativeModeTabs.BUILDING_BLOCKS) {
+            event.accept(fr.dyooneoxz.neoenchant.init.ModBlocks.PRIMORDIAL_OBSIDIAN.get());
+        }
     }
 
 }

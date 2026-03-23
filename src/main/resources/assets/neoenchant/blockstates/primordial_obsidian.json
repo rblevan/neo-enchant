@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model":  "neoenchant:block/primordial_obsidian"}
+    "": {
+      "model":  "neoenchant:block/primordial_obsidian"
+    }
   }
 }

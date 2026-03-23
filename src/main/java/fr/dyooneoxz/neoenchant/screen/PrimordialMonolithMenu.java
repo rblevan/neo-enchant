@@ -120,11 +120,9 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
     public void broadcastChanges() {
         super.broadcastChanges();
 
-        // On récupère l'objet dans la case 0 (l'arme)
         ItemStack currentItem = this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
                 .map(h -> h.getStackInSlot(0)).orElse(ItemStack.EMPTY);
 
-        // Si l'objet a changé (le joueur a posé ou retiré un objet)
         if (!ItemStack.matches(currentItem, lastItem)) {
             lastItem = currentItem.copy();
             this.updateEnchantmentOptions(currentItem);
@@ -135,27 +133,23 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
         float power = 0;
         net.minecraft.world.level.Level level = this.blockEntity.getLevel();
         net.minecraft.core.BlockPos center = this.blockEntity.getBlockPos();
-
-        // On scanne sur un rayon de trois blocs (comme la table classique.)
         for (int x = -3; x <= 3; x++) {
             for (int z = -3; z <= 3; z++) {
-                // On check à la hauteur de la table (0) et juste au-dessus (1)
                 for (int y = -2 ; y <= 2; y++) {
-                    // On ignore les 9 blocs centraux pour laisser la place au joueur et à la table
                     if (Math.abs(x) < 2 && Math.abs(z) < 2) continue;
                     net.minecraft.core.BlockPos checkPos = center.offset(x, y, z);
 
-                    // --- LE BLOC REQUIS ---
-                    // Ici on utilise ton Obsidienne Primordiale (si elle est bien dans ModBlocks) !
-                    // Tu peux remplacer par Blocks.OBSIDIAN si tu n'as pas encore créé le bloc dans le code.
+                    if(!level.getBlockState(checkPos).is(ModBlocks.PRIMORDIAL_OBSIDIAN.get())) {
+                        power = power + 2;
+                    }
                     if (level.getBlockState(checkPos).is(Blocks.NETHERITE_BLOCK)) {
-                       power = power + 2;
+                       power = power + 1;
                     }
                     if (level.getBlockState(checkPos).is(Blocks.DIAMOND_BLOCK)) {
-                        power = power + 1;
+                        power = power + 0.9f;
                     }
                     if (level.getBlockState(checkPos).is(Blocks.EMERALD_BLOCK)) {
-                        power = power + 1;
+                        power = power + 0.9f;
                     }
                     if (level.getBlockState(checkPos).is(Blocks.GOLD_BLOCK)) {
                         power = power + 0.8f;
@@ -163,7 +157,6 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                     if (level.getBlockState(checkPos).is(Blocks.LAPIS_BLOCK)) {
                         power = power + 0.5f;
                     }
-
                 }
             }
         }
@@ -248,11 +241,8 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                 net.minecraft.resources.ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
                 if (registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID)) {
 
-                    // C'est un de tes enchantements (Givre, Poison...) !
-                    // On lui donne seulement 15% de chance de pouvoir être sélectionné.
-                    // (Tu peux changer le 0.15f si tu veux les rendre plus ou moins rares)
-                    if (random.nextFloat() > 0.15f) {
-                        continue; // 85% du temps, on l'ignore pour forcer le joueur à farmer !
+                    if (random.nextFloat() > 0.05f) {
+                        continue;
                     }
                 }
 
@@ -262,24 +252,18 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
 
         if (possibleEnchants.isEmpty()) return list;
 
-        // --- Règle 1 : Le nombre d'enchantements selon la puissance ---
-        // Niveau 30+ = 2 enchants min. Niveau 80+ = 4 enchants min !
         int enchantCount;
         if (powerLevel >= 80) {
-            // Niveau 80 à 100 : Entre 2 et 4 enchantements (Jamais 6 !)
             enchantCount = 2 + random.nextInt(3);
         } else if (powerLevel >= 50) {
-            // Niveau 50 à 79 : Entre 1 et 3 enchantements
             enchantCount = 1 + random.nextInt(3);
         } else {
-            // Niveau 0 à 49 : 1 ou 2 enchantements max
             enchantCount = 1 + random.nextInt(2);
         }
         java.util.Collections.shuffle(possibleEnchants, new java.util.Random(random.nextInt()));
 
         for (net.minecraft.world.item.enchantment.Enchantment enchantment : possibleEnchants) {
             if (list.size() >= enchantCount) break;
-            // On vérifie que le nouvel enchantement est compatible avec ceux déjà choisis (ex: pas Tranchant ET Fléau des arthropodes)
             boolean isCompatible = true;
             for (net.minecraft.world.item.enchantment.EnchantmentInstance existing : list) {
                 if (!enchantment.isCompatibleWith(existing.enchantment)) {

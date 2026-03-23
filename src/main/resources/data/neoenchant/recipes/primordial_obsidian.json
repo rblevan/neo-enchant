@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ROG",
+    "OCO",
+    "AOD"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "A": {
+      "item": "minecraft:amethyst_block"
+    },
+    "G": {
+      "item": "minecraft:gold_block"
+    },
+    "D": {
+      "item": "minecraft:diamond_block"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "C": {
+      "item": "minecraft:crying_obsidian"
+    }
+  },
+  "result": {
+    "item": "neoenchant:primordial_obsidian",
+    "count": 1
+  }
+}

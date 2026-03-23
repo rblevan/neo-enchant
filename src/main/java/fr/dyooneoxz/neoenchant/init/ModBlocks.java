@@ -21,7 +21,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> PRIMORDIAL_MONOLITH = registerBlock("primordial_monolith",
             () -> new PrimordialMonolithBlock(BlockBehaviour.Properties.copy(Blocks.ENCHANTING_TABLE)));
 
-    public static final RegistryObject<Block> PRIMORDIAL_OBSIDIAN = registerBlock("primordial_obsidian.json",
+    public static final RegistryObject<Block> PRIMORDIAL_OBSIDIAN = registerBlock("primordial_obsidian",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {

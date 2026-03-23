@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " E ",
+    "NON",
+    "OOO"
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:end_crystal"
+    },
+    "N": {
+      "item": "infernexte_mod:netherite_star_upgrad"
+    },
+    "O": {
+      "item": "neoenchant:primordial_obsidian"
+    }
+  },
+  "result": {
+    "item": "neoenchant:primordial_monolith",
+    "count": 1
+  }
+}
