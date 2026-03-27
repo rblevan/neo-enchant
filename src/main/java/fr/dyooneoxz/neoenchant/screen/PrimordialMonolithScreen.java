@@ -17,6 +17,8 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
 
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(NeoEnchant.MODID, "textures/gui/primordial_monolith_gui.png");
+    private static final ResourceLocation FLASH_TEXTURE =
+            new ResourceLocation(NeoEnchant.MODID, "textures/gui/monolith_flash.png");
     private static final ResourceLocation ACTIVE_BUTTON_TEXTURE =
             new ResourceLocation(NeoEnchant.MODID, "textures/gui/active_btn_bg.png");
     private static final ResourceLocation ACTIVE_COST_TEXTURE =
@@ -36,6 +38,10 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
     private static final int BOX_WIDTH = 20;
     private static final int BOX_HEIGHT = 14;
 
+    private int animationTick = 0;
+    private final int MAX_ANIMATION_TICKS = 24;
+    private final int TOTAL_FRAMES = 8;
+
     public PrimordialMonolithScreen(PrimordialMonolithMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.imageWidth = 176;
@@ -47,6 +53,14 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
         super.init();
         this.inventoryLabelY = 10000;
         this.titleLabelY = 10000;
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        if (this.animationTick > 0) {
+            this.animationTick--;
+        }
     }
 
     @Override
@@ -100,6 +114,20 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
                 guiGraphics.drawString(this.font, costText, centeredX, centeredY, 0x8CFFFB, true);
             }
         }
+        if (this.animationTick > 0) {
+            int currentFrame = TOTAL_FRAMES - 1 - (int) (((float) this.animationTick / MAX_ANIMATION_TICKS) * TOTAL_FRAMES);
+
+            if (currentFrame < 0) currentFrame = 0;
+            if (currentFrame >= TOTAL_FRAMES) currentFrame = TOTAL_FRAMES - 1;
+            int vOffset = currentFrame * this.imageHeight;
+
+            com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+            com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
+
+            guiGraphics.blit(FLASH_TEXTURE, x, y, this.imageWidth, this.imageHeight, 0.0F, (float)vOffset, this.imageWidth, this.imageHeight, 176, 1328);
+
+            com.mojang.blaze3d.systems.RenderSystem.disableBlend();
+        }
     }
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
@@ -113,6 +141,7 @@ public class PrimordialMonolithScreen extends AbstractContainerScreen<Primordial
             if (pMouseX >= btnX && pMouseX < btnX + BTN_WIDTH && pMouseY >= btnY && pMouseY < btnY + BTN_HEIGHT) {
                 if (this.menu.clickMenuButton(this.minecraft.player, i)) {
                     this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, i);
+                    this.animationTick = MAX_ANIMATION_TICKS;
                     return true;
                 }
             }
