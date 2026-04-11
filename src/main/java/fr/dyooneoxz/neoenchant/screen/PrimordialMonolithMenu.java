@@ -113,7 +113,7 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                     } else if (!this.moveItemStackTo(sourceStack, 2, 29, false)) return ItemStack.EMPTY; // Hotbar vers inventaire
                 }
             }
-            else if (sourceStack.isEnchantable()) {
+            else if (sourceStack.isEnchantable() || sourceStack.is(net.minecraft.world.item.Items.BOOK)) {
                 if (!this.moveItemStackTo(sourceStack, 0, 1, false)) {
                     if (index < 29) {
                         if (!this.moveItemStackTo(sourceStack, 29, 38, false)) return ItemStack.EMPTY;
@@ -235,11 +235,11 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
         if (id >= 0 && id < 4) {
             int cost = this.costs[id];
 
-            ItemStack weaponStack = this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
-                    .map(h -> h.getStackInSlot(0)).orElse(ItemStack.EMPTY);
+            net.minecraftforge.items.IItemHandler handler = this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+            if (handler == null) return false;
 
-            ItemStack lapisStack = this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
-                    .map(h -> h.getStackInSlot(1)).orElse(ItemStack.EMPTY);
+            ItemStack weaponStack = handler.getStackInSlot(0);
+            ItemStack lapisStack = handler.getStackInSlot(1);
 
             int lapisCost = id + 1;
 
@@ -249,13 +249,60 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
 
                 if (!player.getAbilities().instabuild) {
                     player.onEnchantmentPerformed(weaponStack, cost);
-                    lapisStack.shrink(lapisCost);
+                    handler.extractItem(1, lapisCost, false);
                 }
 
-                java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> enchantmentsToApply = getCustomEnchantments(weaponStack, cost, this.blockEntity.getLevel().random);
+                boolean isBook = weaponStack.is(net.minecraft.world.item.Items.BOOK);
 
-                for (net.minecraft.world.item.enchantment.EnchantmentInstance instance : enchantmentsToApply) {
-                    weaponStack.enchant(instance.enchantment, instance.level);
+                if (isBook) {
+                    java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> enchantmentsToApply = new java.util.ArrayList<>();
+                    net.minecraft.util.RandomSource random = this.blockEntity.getLevel().random;
+
+                    boolean getCurse = (id == 3) && (random.nextFloat() <= 0.05f);
+
+                    if (getCurse) {
+                        java.util.List<net.minecraft.world.item.enchantment.Enchantment> curses = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues().stream()
+                                .filter(net.minecraft.world.item.enchantment.Enchantment::isCurse)
+                                .toList();
+                        if (!curses.isEmpty()) {
+                            net.minecraft.world.item.enchantment.Enchantment randomCurse = curses.get(random.nextInt(curses.size()));
+                            enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(randomCurse, 1));
+                        }
+                    } else {
+                        int numEnchants = (id == 3) ? 4 + random.nextInt(2) : id + 1;
+                        java.util.List<net.minecraft.world.item.enchantment.Enchantment> allEnchants = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues().stream()
+                                .filter(e -> !e.isCurse() && !e.isTreasureOnly())
+                                .toList();
+
+                        for (int i = 0; i < numEnchants; i++) {
+                            net.minecraft.world.item.enchantment.Enchantment ench = allEnchants.get(random.nextInt(allEnchants.size()));
+                            int maxLevel = ench.getMaxLevel();
+                            int givenLevel = 1;
+
+                            if (id == 1) givenLevel = Math.min(2, maxLevel);
+                            else if (id == 2) givenLevel = Math.max(1, maxLevel - 1);
+                            else if (id == 3) givenLevel = maxLevel;
+
+                            boolean alreadyHas = enchantmentsToApply.stream().anyMatch(inst -> inst.enchantment == ench);
+                            if (!alreadyHas) {
+                                enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(ench, givenLevel));
+                            }
+                        }
+                    }
+
+                    ItemStack enchantedBook = new ItemStack(net.minecraft.world.item.Items.ENCHANTED_BOOK);
+                    for (net.minecraft.world.item.enchantment.EnchantmentInstance inst : enchantmentsToApply) {
+                        net.minecraft.world.item.EnchantedBookItem.addEnchantment(enchantedBook, inst);
+                    }
+
+                    handler.extractItem(0, 1, false);
+                    handler.insertItem(0, enchantedBook, false);
+
+                } else {
+                    java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> enchantmentsToApply = getCustomEnchantments(weaponStack, cost, this.blockEntity.getLevel().random);
+                    for (net.minecraft.world.item.enchantment.EnchantmentInstance instance : enchantmentsToApply) {
+                        weaponStack.enchant(instance.enchantment, instance.level);
+                    }
                 }
 
                 this.updateEnchantmentOptions(ItemStack.EMPTY);
@@ -275,16 +322,22 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
 
         for (net.minecraft.world.item.enchantment.Enchantment enchantment : net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues()) {
             if (enchantment.isCurse()) continue;
+
             if (enchantment.canEnchant(stack)) {
                 net.minecraft.resources.ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
                 boolean isCustom = registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
-                if (isCustom) {
+
+                if (enchantment == fr.dyooneoxz.neoenchant.init.ModEnchantments.HEROS_BANE.get()) {
+                    if (powerLevel < 85) continue;
+                    if (random.nextFloat() > 0.02f) continue;
+                }
+                else if (isCustom) {
                     if (powerLevel <= 66) continue;
                     float customChance = powerLevel >= 85 ? 0.05f : 0.02f;
                     if (random.nextFloat() > customChance) continue;
                 }
 
-                // mending
+                //  MENDING
                 if (enchantment == net.minecraft.world.item.enchantment.Enchantments.MENDING) {
                     float mendingChance = powerLevel <= 30 ? 0.01f :
                             powerLevel <= 48 ? 0.03f :
@@ -292,7 +345,6 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                                             powerLevel <= 84 ? 0.15f : 0.25f;
                     if (random.nextFloat() > mendingChance) continue;
                 }
-
                 possibleEnchants.add(enchantment);
             }
         }

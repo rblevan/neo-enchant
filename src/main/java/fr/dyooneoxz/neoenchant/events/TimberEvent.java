@@ -86,6 +86,7 @@ public class TimberEvent {
         float woodChance = timberLevel == 3 ? 1.0f : (timberLevel == 2 ? 0.66f : 0.33f);
         float leafChance = timberLevel == 3 ? 0.66f : (timberLevel == 2 ? 0.50f : 0.33f);
         float stickSaplingChance = timberLevel == 3 ? 0.33f : (0.16f);
+        float appleChance = timberLevel == 3 ? 0.10f : (timberLevel == 2 ? 0.05f : 0.02f);
 
         int logsDestroyed = 0;
 
@@ -109,6 +110,8 @@ public class TimberEvent {
             } else if (roll <= leafChance + stickSaplingChance) {
                 ItemStack drop = level.random.nextBoolean() ? new ItemStack(Items.STICK) : new ItemStack(Items.OAK_SAPLING);
                 spawnItem(level, startPos, drop);
+            } else if (roll <= leafChance + stickSaplingChance + appleChance) {
+                spawnItem(level, startPos, new ItemStack(Items.APPLE));
             }
         }
         level.playSound(null, startPos, SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1.0F, 0.8F);

@@ -29,6 +29,9 @@ public class ModEnchantments {
     public static final RegistryObject<Enchantment> MINERAL_ECHO = ENCHANTMENTS.register("mineral_echo",
             () -> new MineralEchoEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
 
+    public static final RegistryObject<Enchantment> HEROS_BANE = ENCHANTMENTS.register("heros_bane",
+            () -> new HerosBaneEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
+
     public static void register(IEventBus eventBus) {
         ENCHANTMENTS.register(eventBus);
     }
