@@ -24,29 +24,29 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
     public final DataSlot enchantSeed = DataSlot.standalone();
 
     private final ContainerData enchantmentData = new ContainerData() {
-      @Override
-      public int get(int index) {
-        return switch (index) {
-            case 0, 1, 2, 3 -> costs[index];
-            case 4, 5, 6, 7 -> enchantClue[index - 4];
-            case 8, 9, 10, 11 -> levelClue[index - 8];
-            default -> 0;
-        };
-      }
+        @Override
+        public int get(int index) {
+            return switch (index) {
+                case 0, 1, 2, 3 -> costs[index];
+                case 4, 5, 6, 7 -> enchantClue[index - 4];
+                case 8, 9, 10, 11 -> levelClue[index - 8];
+                default -> 0;
+            };
+        }
 
-      @Override
-      public void set(int index, int value) {
-          switch (index) {
-              case 0, 1, 2, 3 -> costs[index] = value;
-              case 4, 5, 6, 7 -> enchantClue[index - 4] = value;
-              case 8, 9, 10, 11 -> levelClue[index - 8] = value;
-          }
-      }
+        @Override
+        public void set(int index, int value) {
+            switch (index) {
+                case 0, 1, 2, 3 -> costs[index] = value;
+                case 4, 5, 6, 7 -> enchantClue[index - 4] = value;
+                case 8, 9, 10, 11 -> levelClue[index - 8] = value;
+            }
+        }
 
-      @Override
-      public int getCount() {
-        return 12;
-      }
+        @Override
+        public int getCount() {
+            return 12;
+        }
 
     };
 
@@ -110,14 +110,15 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(sourceStack, 1, 2, false)) {
                     if (index < 29) {
                         if (!this.moveItemStackTo(sourceStack, 29, 38, false)) return ItemStack.EMPTY;
-                    } else if (!this.moveItemStackTo(sourceStack, 2, 29, false)) return ItemStack.EMPTY; // Hotbar vers inventaire
+                    } else if (!this.moveItemStackTo(sourceStack, 2, 29, false)) return ItemStack.EMPTY;
                 }
             }
             else if (sourceStack.isEnchantable() || sourceStack.is(net.minecraft.world.item.Items.BOOK)) {
-                if (!this.moveItemStackTo(sourceStack, 0, 1, false)) {
-                    if (index < 29) {
-                        if (!this.moveItemStackTo(sourceStack, 29, 38, false)) return ItemStack.EMPTY;
-                    } else if (!this.moveItemStackTo(sourceStack, 2, 29, false)) return ItemStack.EMPTY;
+                Slot enchantSlot = this.slots.get(0);
+
+                if (!enchantSlot.hasItem()) {
+                    enchantSlot.set(sourceStack.split(1));
+                    enchantSlot.setChanged();
                 }
             }
             else {
@@ -133,6 +134,7 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
             }
         }
 
+        // --- Mise à jour de l'UI ---
         if (sourceStack.getCount() == 0) {
             sourceSlot.set(ItemStack.EMPTY);
         } else {
@@ -164,15 +166,15 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
         net.minecraft.core.BlockPos center = this.blockEntity.getBlockPos();
         for (int x = -3; x <= 3; x++) {
             for (int z = -3; z <= 3; z++) {
-                for (int y = -2 ; y <= 2; y++) {
+                for (int y = -2; y <= 2; y++) {
                     if (Math.abs(x) < 3 && Math.abs(z) < 3) continue;
                     net.minecraft.core.BlockPos checkPos = center.offset(x, y, z);
 
-                    if(level.getBlockState(checkPos).is(ModBlocks.PRIMORDIAL_OBSIDIAN.get())) {
+                    if (level.getBlockState(checkPos).is(ModBlocks.PRIMORDIAL_OBSIDIAN.get())) {
                         power = power + 2;
                     }
                     if (level.getBlockState(checkPos).is(Blocks.NETHERITE_BLOCK)) {
-                       power = power + 1;
+                        power = power + 1;
                     }
                     if (level.getBlockState(checkPos).is(Blocks.DIAMOND_BLOCK)) {
                         power = power + 0.9f;
@@ -204,11 +206,11 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
             var random = this.blockEntity.getLevel().random;
 
             float powerBlocks = countPowerBlocks();
-            int bonus = (int)(powerBlocks * 2.5);
+            int bonus = (int) (powerBlocks * 2.5);
 
-            int cost0 = random.nextInt(10) + 10 + (int)(bonus * 0.55);
-            int cost1 = random.nextInt(15) + 20 + (int)(bonus * 0.65);
-            int cost2 = random.nextInt(20) + 35 + (int)(bonus * 0.8);
+            int cost0 = random.nextInt(10) + 10 + (int) (bonus * 0.55);
+            int cost1 = random.nextInt(15) + 20 + (int) (bonus * 0.65);
+            int cost2 = random.nextInt(20) + 35 + (int) (bonus * 0.8);
             int cost3 = random.nextInt(25) + 50 + bonus;
 
             costs[0] = Math.min(cost0, 47);
@@ -261,42 +263,80 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                     java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> enchantmentsToApply = new java.util.ArrayList<>();
                     net.minecraft.util.RandomSource random = this.blockEntity.getLevel().random;
 
-                    boolean getCurse = (id == 3) && (random.nextFloat() <= 0.05f);
+                    boolean gotArcaneSilence = false;
+                    if (id == 3 && random.nextFloat() <= 0.005f) {
+                        gotArcaneSilence = true;
+                        enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(fr.dyooneoxz.neoenchant.init.ModEnchantments.ARCANE_SILENCE.get(), 1));
+                    }
 
-                    if (getCurse) {
-                        java.util.List<net.minecraft.world.item.enchantment.Enchantment> curses = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues().stream()
-                                .filter(net.minecraft.world.item.enchantment.Enchantment::isCurse)
-                                .toList();
-                        if (!curses.isEmpty()) {
-                            net.minecraft.world.item.enchantment.Enchantment randomCurse = curses.get(random.nextInt(curses.size()));
-                            enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(randomCurse, 1));
-                        }
-                    } else {
-                        int numEnchants = (id == 3) ? 4 + random.nextInt(2) : id + 1;
+                    if (!gotArcaneSilence) {
+                        boolean getCurse = (id == 3) && (random.nextFloat() <= 0.05f);
 
-                        // --- LE FAMEUX JET VIP POUR FLÉAU DES HÉROS SUR LES LIVRES ---
-                        if (id == 3 && random.nextFloat() <= 0.02f) {
-                            int baneLevel = 1 + random.nextInt(3);
-                            enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(fr.dyooneoxz.neoenchant.init.ModEnchantments.HEROS_BANE.get(), baneLevel));
-                            numEnchants--;
-                        }
+                        if (getCurse) {
+                            java.util.List<net.minecraft.world.item.enchantment.Enchantment> curses = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues().stream()
+                                    .filter(net.minecraft.world.item.enchantment.Enchantment::isCurse)
+                                    .toList();
+                            if (!curses.isEmpty()) {
+                                net.minecraft.world.item.enchantment.Enchantment randomCurse = curses.get(random.nextInt(curses.size()));
+                                enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(randomCurse, 1));
+                            }
+                        } else {
+                            int numEnchants = (id == 3) ? 4 + random.nextInt(2) : id + 1;
 
-                        java.util.List<net.minecraft.world.item.enchantment.Enchantment> allEnchants = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues().stream()
-                                .filter(e -> !e.isCurse() && !e.isTreasureOnly())
-                                .toList();
+                            // ========================================================
+                            // 1. JET VIP : ENCHANTEMENTS CUSTOM (Très Rares)
+                            // ========================================================
+                            java.util.List<net.minecraft.world.item.enchantment.Enchantment> customEnchants = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues().stream()
+                                    .filter(e -> {
+                                        net.minecraft.resources.ResourceLocation key = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(e);
+                                        boolean isCustom = key != null && key.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
+                                        // On isole tes enchantements custom, en excluant l'Arcane Silence (déjà géré)
+                                        return isCustom && e != fr.dyooneoxz.neoenchant.init.ModEnchantments.ARCANE_SILENCE.get();
+                                    })
+                                    .toList();
 
-                        for (int i = 0; i < numEnchants; i++) {
-                            net.minecraft.world.item.enchantment.Enchantment ench = allEnchants.get(random.nextInt(allEnchants.size()));
-                            int maxLevel = ench.getMaxLevel();
-                            int givenLevel = 1;
+                            float customChance = (id == 3) ? 0.03f : 0.01f;
 
-                            if (id == 1) givenLevel = Math.min(2, maxLevel);
-                            else if (id == 2) givenLevel = Math.max(1, maxLevel - 1);
-                            else if (id == 3) givenLevel = maxLevel;
+                            if (random.nextFloat() <= customChance && !customEnchants.isEmpty()) {
+                                net.minecraft.world.item.enchantment.Enchantment rolledCustom = customEnchants.get(random.nextInt(customEnchants.size()));
 
-                            boolean alreadyHas = enchantmentsToApply.stream().anyMatch(inst -> inst.enchantment == ench);
-                            if (!alreadyHas) {
-                                enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(ench, givenLevel));
+                                int maxLevel = rolledCustom.getMaxLevel();
+                                int givenLevel = 1;
+                                if (id == 1) givenLevel = Math.min(2, maxLevel);
+                                else if (id == 2) givenLevel = Math.max(1, maxLevel - 1);
+                                else if (id == 3) givenLevel = maxLevel;
+
+                                enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(rolledCustom, givenLevel));
+                                numEnchants--; // L'enchantement rare prend la place d'un enchantement classique
+                            }
+
+                            // ========================================================
+                            // 2. JET STANDARD : ENCHANTEMENTS VANILLA (Classiques)
+                            // ========================================================
+                            java.util.List<net.minecraft.world.item.enchantment.Enchantment> vanillaEnchants = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues().stream()
+                                    .filter(e -> {
+                                        if (e.isCurse() || e.isTreasureOnly()) return false;
+
+                                        net.minecraft.resources.ResourceLocation key = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(e);
+                                        boolean isCustom = key != null && key.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
+
+                                        return !isCustom;
+                                    })
+                                    .toList();
+
+                            for (int i = 0; i < numEnchants; i++) {
+                                net.minecraft.world.item.enchantment.Enchantment ench = vanillaEnchants.get(random.nextInt(vanillaEnchants.size()));
+                                int maxLevel = ench.getMaxLevel();
+                                int givenLevel = 1;
+
+                                if (id == 1) givenLevel = Math.min(2, maxLevel);
+                                else if (id == 2) givenLevel = Math.max(1, maxLevel - 1);
+                                else if (id == 3) givenLevel = maxLevel;
+
+                                boolean alreadyHas = enchantmentsToApply.stream().anyMatch(inst -> inst.enchantment == ench);
+                                if (!alreadyHas) {
+                                    enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(ench, givenLevel));
+                                }
                             }
                         }
                     }
@@ -313,7 +353,6 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                     // ==========================================
                     // --- SECTION ARMES / OUTILS / ARMURES ---
                     // ==========================================
-                    // Fléau des Héros est déjà géré directement dans ton getCustomEnchantments !
                     java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> enchantmentsToApply = getCustomEnchantments(weaponStack, cost, this.blockEntity.getLevel().random);
                     for (net.minecraft.world.item.enchantment.EnchantmentInstance instance : enchantmentsToApply) {
                         weaponStack.enchant(instance.enchantment, instance.level);
@@ -331,149 +370,147 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
         return false;
     }
 
-    private java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> getCustomEnchantments(net.minecraft.world.item.ItemStack stack, int powerLevel, net.minecraft.util.RandomSource random) {
-        java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> list = new java.util.ArrayList<>();
-        java.util.List<net.minecraft.world.item.enchantment.Enchantment> possibleEnchants = new java.util.ArrayList<>();
+    private java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> getCustomEnchantments
+        (net.minecraft.world.item.ItemStack stack,int powerLevel, net.minecraft.util.RandomSource random){
+            java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> list = new java.util.ArrayList<>();
+            java.util.List<net.minecraft.world.item.enchantment.Enchantment> possibleEnchants = new java.util.ArrayList<>();
 
-        for (net.minecraft.world.item.enchantment.Enchantment enchantment : net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues()) {
-            if (enchantment.isCurse()) continue;
+            for (net.minecraft.world.item.enchantment.Enchantment enchantment : net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues()) {
+                if (enchantment.isCurse()) continue;
 
-            if (enchantment.canEnchant(stack)) {
-                net.minecraft.resources.ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
-                boolean isCustom = registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
+                if (enchantment == fr.dyooneoxz.neoenchant.init.ModEnchantments.ARCANE_SILENCE.get()) continue;
 
-                if (enchantment == fr.dyooneoxz.neoenchant.init.ModEnchantments.HEROS_BANE.get()) {
-                    if (powerLevel < 85) continue;
-                    if (random.nextFloat() > 0.02f) continue;
+                if (enchantment.canEnchant(stack)) {
+                    net.minecraft.resources.ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+                    boolean isCustom = registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
+
+                    if (enchantment == fr.dyooneoxz.neoenchant.init.ModEnchantments.HEROS_BANE.get()) {
+                        if (powerLevel < 85) continue;
+                        if (random.nextFloat() > 0.02f) continue;
+                    } else if (isCustom) {
+                        if (powerLevel <= 66) continue;
+                        float customChance = powerLevel >= 85 ? 0.05f : 0.02f;
+                        if (random.nextFloat() > customChance) continue;
+                    }
+
+                    //  MENDING
+                    if (enchantment == net.minecraft.world.item.enchantment.Enchantments.MENDING) {
+                        float mendingChance = powerLevel <= 30 ? 0.01f :
+                                powerLevel <= 48 ? 0.03f :
+                                        powerLevel <= 66 ? 0.08f :
+                                                powerLevel <= 84 ? 0.15f : 0.25f;
+                        if (random.nextFloat() > mendingChance) continue;
+                    }
+                    possibleEnchants.add(enchantment);
                 }
-                else if (isCustom) {
-                    if (powerLevel <= 66) continue;
-                    float customChance = powerLevel >= 85 ? 0.05f : 0.02f;
-                    if (random.nextFloat() > customChance) continue;
-                }
-
-                //  MENDING
-                if (enchantment == net.minecraft.world.item.enchantment.Enchantments.MENDING) {
-                    float mendingChance = powerLevel <= 30 ? 0.01f :
-                            powerLevel <= 48 ? 0.03f :
-                                    powerLevel <= 66 ? 0.08f :
-                                            powerLevel <= 84 ? 0.15f : 0.25f;
-                    if (random.nextFloat() > mendingChance) continue;
-                }
-                possibleEnchants.add(enchantment);
             }
-        }
 
-        if (possibleEnchants.isEmpty()) return list;
-        java.util.Collections.shuffle(possibleEnchants, new java.util.Random(random.nextInt()));
+            if (possibleEnchants.isEmpty()) return list;
+            java.util.Collections.shuffle(possibleEnchants, new java.util.Random(random.nextInt()));
 
-        int enchantCount = 1;
-        boolean allowMaxLevel = true;
-        boolean forceOneMaxLevel = false;
-        boolean forceAllMaxLevel = false;
+            int enchantCount = 1;
+            boolean allowMaxLevel = true;
+            boolean forceOneMaxLevel = false;
+            boolean forceAllMaxLevel = false;
 
-        int roll = random.nextInt(100);
+            int roll = random.nextInt(100);
 
-        if (powerLevel <= 30) {
-            enchantCount = 1 + random.nextInt(2);
-            allowMaxLevel = false;
-        }
-        else if (powerLevel <= 48) {
-            if (roll < 2) {
-                enchantCount = 4 + random.nextInt(2);
-                allowMaxLevel = false;
-            } else if (roll < 10) {
-                enchantCount = 2 + random.nextInt(2);
-                forceOneMaxLevel = true;
-                allowMaxLevel = false;
-            } else if (roll < 20) {
-                enchantCount = 2 + random.nextInt(2);
-                allowMaxLevel = true;
-            } else {
+            if (powerLevel <= 30) {
                 enchantCount = 1 + random.nextInt(2);
                 allowMaxLevel = false;
-            }
-        }
-        else if (powerLevel <= 66) {
-            if (roll < 5) { // 5%
-                enchantCount = 5 + random.nextInt(2);
-                allowMaxLevel = false;
-            } else if (roll < 20) { // 15%
-                enchantCount = 3 + random.nextInt(2);
-                forceOneMaxLevel = true;
-                allowMaxLevel = false;
-            } else if (roll < 50) { // 30%
-                enchantCount = 3 + random.nextInt(2);
+            } else if (powerLevel <= 48) {
+                if (roll < 2) {
+                    enchantCount = 4 + random.nextInt(2);
+                    allowMaxLevel = false;
+                } else if (roll < 10) {
+                    enchantCount = 2 + random.nextInt(2);
+                    forceOneMaxLevel = true;
+                    allowMaxLevel = false;
+                } else if (roll < 20) {
+                    enchantCount = 2 + random.nextInt(2);
+                    allowMaxLevel = true;
+                } else {
+                    enchantCount = 1 + random.nextInt(2);
+                    allowMaxLevel = false;
+                }
+            } else if (powerLevel <= 66) {
+                if (roll < 5) { // 5%
+                    enchantCount = 5 + random.nextInt(2);
+                    allowMaxLevel = false;
+                } else if (roll < 20) { // 15%
+                    enchantCount = 3 + random.nextInt(2);
+                    forceOneMaxLevel = true;
+                    allowMaxLevel = false;
+                } else if (roll < 50) { // 30%
+                    enchantCount = 3 + random.nextInt(2);
+                    allowMaxLevel = true;
+                } else { // 50%
+                    enchantCount = 2 + random.nextInt(2);
+                    allowMaxLevel = false;
+                }
+            } else if (powerLevel <= 84) {
+                enchantCount = 3 + random.nextInt(3); // 3 à 5 enchants
                 allowMaxLevel = true;
-            } else { // 50%
-                enchantCount = 2 + random.nextInt(2);
-                allowMaxLevel = false;
-            }
-        }
-        else if (powerLevel <= 84) {
-            enchantCount = 3 + random.nextInt(3); // 3 à 5 enchants
-            allowMaxLevel = true;
-        }
-        else {
-            if (roll < 20) {
-                enchantCount = 3;
-                forceAllMaxLevel = true;
             } else {
-                enchantCount = 4 + random.nextInt(4);
-                allowMaxLevel = true;
-            }
-        }
-
-        boolean hasAssignedMax = false;
-
-        for (net.minecraft.world.item.enchantment.Enchantment enchantment : possibleEnchants) {
-            if (list.size() >= enchantCount) break;
-            boolean isCompatible = true;
-            for (net.minecraft.world.item.enchantment.EnchantmentInstance existing : list) {
-                if (!enchantment.isCompatibleWith(existing.enchantment)) {
-                    isCompatible = false;
-                    break;
+                if (roll < 20) {
+                    enchantCount = 3;
+                    forceAllMaxLevel = true;
+                } else {
+                    enchantCount = 4 + random.nextInt(4);
+                    allowMaxLevel = true;
                 }
             }
 
-            if (isCompatible) {
-                int maxLevel = enchantment.getMaxLevel();
-                int levelToApply = 1;
+            boolean hasAssignedMax = false;
 
-                net.minecraft.resources.ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
-                boolean isCustom = registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
+            for (net.minecraft.world.item.enchantment.Enchantment enchantment : possibleEnchants) {
+                if (list.size() >= enchantCount) break;
+                boolean isCompatible = true;
+                for (net.minecraft.world.item.enchantment.EnchantmentInstance existing : list) {
+                    if (!enchantment.isCompatibleWith(existing.enchantment)) {
+                        isCompatible = false;
+                        break;
+                    }
+                }
 
-                // ex: mending
-                if (maxLevel > 1) {
-                    if (forceAllMaxLevel) {
-                        levelToApply = maxLevel;
-                    } else if (forceOneMaxLevel && !hasAssignedMax && !isCustom) {
-                        levelToApply = maxLevel;
-                        hasAssignedMax = true;
-                    } else {
-                        if (isCustom) {
-                            if (powerLevel <= 84) {
-                                levelToApply = Math.max(1, random.nextInt(maxLevel));
-                            } else {
-                                levelToApply = Math.max(1, maxLevel - random.nextInt(2));
-                            }
+                if (isCompatible) {
+                    int maxLevel = enchantment.getMaxLevel();
+                    int levelToApply = 1;
+
+                    net.minecraft.resources.ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+                    boolean isCustom = registryName != null && registryName.getNamespace().equals(fr.dyooneoxz.neoenchant.NeoEnchant.MODID);
+
+                    // ex: mending
+                    if (maxLevel > 1) {
+                        if (forceAllMaxLevel) {
+                            levelToApply = maxLevel;
+                        } else if (forceOneMaxLevel && !hasAssignedMax && !isCustom) {
+                            levelToApply = maxLevel;
+                            hasAssignedMax = true;
                         } else {
-                            if (!allowMaxLevel) {
-                                levelToApply = Math.max(1, random.nextInt(maxLevel));
-                            } else {
-                                if (powerLevel >= 85) {
-                                    levelToApply = Math.max(1, maxLevel - random.nextInt(2));
+                            if (isCustom) {
+                                if (powerLevel <= 84) {
+                                    levelToApply = Math.max(1, random.nextInt(maxLevel));
                                 } else {
-                                    levelToApply = random.nextInt(maxLevel) + 1;
+                                    levelToApply = Math.max(1, maxLevel - random.nextInt(2));
+                                }
+                            } else {
+                                if (!allowMaxLevel) {
+                                    levelToApply = Math.max(1, random.nextInt(maxLevel));
+                                } else {
+                                    if (powerLevel >= 85) {
+                                        levelToApply = Math.max(1, maxLevel - random.nextInt(2));
+                                    } else {
+                                        levelToApply = random.nextInt(maxLevel) + 1;
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                list.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(enchantment, levelToApply));
+                    list.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(enchantment, levelToApply));
+                }
             }
+            return list;
         }
-        return list;
     }
-}

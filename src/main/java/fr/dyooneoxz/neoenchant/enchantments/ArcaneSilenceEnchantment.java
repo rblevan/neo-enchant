@@ -46,14 +46,4 @@ public class ArcaneSilenceEnchantment extends Enchantment {
                 stack.getItem() instanceof AxeItem ||
                 stack.getItem() instanceof HoeItem;
     }
-
-    @Override
-    public void doPostAttack(LivingEntity attacker, Entity target, int level) {
-        super.doPostAttack(attacker, target, level);
-
-        if (!attacker.level().isClientSide() && target instanceof Player targetPlayer) {
-            targetPlayer.removeAllEffects();
-            targetPlayer.addEffect(new MobEffectInstance(ModEffects.SILENCED.get(), 20, 0, false, false, true));
-        }
-    }
 }

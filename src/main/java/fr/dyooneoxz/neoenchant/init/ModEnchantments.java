@@ -35,6 +35,11 @@ public class ModEnchantments {
     public static final RegistryObject<Enchantment> ARCANE_SILENCE =
             ENCHANTMENTS.register("arcane_silence", ArcaneSilenceEnchantment::new);
 
+    public static final RegistryObject<Enchantment> ARCANE_OVERLOAD =
+            ENCHANTMENTS.register("arcane_overload", ArcaneOverloadEnchantment::new);
+
+    public static final RegistryObject<Enchantment> RETRIBUTION_AEGIS =
+            ENCHANTMENTS.register("retribution_aegis", RetributionAegisEnchantment::new);
 
     public static void register(IEventBus eventBus) {
         ENCHANTMENTS.register(eventBus);
