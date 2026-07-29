@@ -12,6 +12,11 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+
 
 public class FrostAspectEnchantment extends Enchantment {
 
@@ -26,6 +31,19 @@ public class FrostAspectEnchantment extends Enchantment {
     }
 
     // Methods
+
+    @Override
+    public Component getFullname(int level) {
+        MutableComponent mutablecomponent = Component.translatable(this.getDescriptionId());
+        mutablecomponent.withStyle(ChatFormatting.AQUA);
+
+        // Ajoute le niveau en chiffres romains si l'enchantement a un niveau supérieur à 1
+        if (level != 1 || this.getMaxLevel() != 1) {
+            mutablecomponent.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + level));
+        }
+
+        return mutablecomponent;
+    }
 
     // -- LEVEL CONFIG -- //
 

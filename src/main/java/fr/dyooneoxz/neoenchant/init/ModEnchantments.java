@@ -32,6 +32,10 @@ public class ModEnchantments {
     public static final RegistryObject<Enchantment> HEROS_BANE = ENCHANTMENTS.register("heros_bane",
             () -> new HerosBaneEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
 
+    public static final RegistryObject<Enchantment> ARCANE_SILENCE =
+            ENCHANTMENTS.register("arcane_silence", ArcaneSilenceEnchantment::new);
+
+
     public static void register(IEventBus eventBus) {
         ENCHANTMENTS.register(eventBus);
     }

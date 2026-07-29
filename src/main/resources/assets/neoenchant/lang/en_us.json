@@ -1,11 +1,14 @@
 {
-  "enchantment.neoenchant.poison_strike": "Poison Strike",
-  "enchantment.neoenchant.frost_aspect": "Frost Aspect",
+  "enchantment.neoenchant.poison_strike": "Poison strike",
+  "enchantment.neoenchant.frost_aspect": "Frost aspect",
   "effect.neoenchant.frost": "Frost",
   "enchantment.neoenchant.frost": "Frost",
-  "block.neoenchant.primordial_monolith": "Primordial Monolith",
-  "block.neoenchant.primordial_obsidian": "Primordial Obsidian",
+  "block.neoenchant.primordial_monolith": "Primordial monolith",
+  "block.neoenchant.primordial_obsidian": "Primordial obsidian",
   "enchantment.neoenchant.timber": "Timber",
-  "enchantment.neoenchant.mineral_echo": "Mineral Echo",
-  "enchantment.neoenchant.heros_bane": "Hero's Bane"
+  "enchantment.neoenchant.mineral_echo": "Mineral echo",
+  "enchantment.neoenchant.heros_bane": "Hero's bane",
+  "enchantment.neoenchant.arcane_silence": "Arcane silence",
+  "effect.neoenchant.silenced": "Silenced"
+
 }

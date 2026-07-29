@@ -255,6 +255,9 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                 boolean isBook = weaponStack.is(net.minecraft.world.item.Items.BOOK);
 
                 if (isBook) {
+                    // ==========================================
+                    // --- SECTION LIVRES ---
+                    // ==========================================
                     java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> enchantmentsToApply = new java.util.ArrayList<>();
                     net.minecraft.util.RandomSource random = this.blockEntity.getLevel().random;
 
@@ -270,6 +273,14 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                         }
                     } else {
                         int numEnchants = (id == 3) ? 4 + random.nextInt(2) : id + 1;
+
+                        // --- LE FAMEUX JET VIP POUR FLÉAU DES HÉROS SUR LES LIVRES ---
+                        if (id == 3 && random.nextFloat() <= 0.02f) {
+                            int baneLevel = 1 + random.nextInt(3);
+                            enchantmentsToApply.add(new net.minecraft.world.item.enchantment.EnchantmentInstance(fr.dyooneoxz.neoenchant.init.ModEnchantments.HEROS_BANE.get(), baneLevel));
+                            numEnchants--;
+                        }
+
                         java.util.List<net.minecraft.world.item.enchantment.Enchantment> allEnchants = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues().stream()
                                 .filter(e -> !e.isCurse() && !e.isTreasureOnly())
                                 .toList();
@@ -299,6 +310,10 @@ public class PrimordialMonolithMenu extends AbstractContainerMenu {
                     handler.insertItem(0, enchantedBook, false);
 
                 } else {
+                    // ==========================================
+                    // --- SECTION ARMES / OUTILS / ARMURES ---
+                    // ==========================================
+                    // Fléau des Héros est déjà géré directement dans ton getCustomEnchantments !
                     java.util.List<net.minecraft.world.item.enchantment.EnchantmentInstance> enchantmentsToApply = getCustomEnchantments(weaponStack, cost, this.blockEntity.getLevel().random);
                     for (net.minecraft.world.item.enchantment.EnchantmentInstance instance : enchantmentsToApply) {
                         weaponStack.enchant(instance.enchantment, instance.level);

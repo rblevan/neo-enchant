@@ -1,5 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "infernexte_mod"
+      }
+    }
+  ],
   "pattern": [
     " E ",
     "NON",
@@ -10,7 +19,7 @@
       "item": "minecraft:end_crystal"
     },
     "N": {
-      "item": "infernexte_mod:netherite_star_upgrad"
+      "item": "minecraft:conduit"
     },
     "O": {
       "item": "neoenchant:primordial_obsidian"

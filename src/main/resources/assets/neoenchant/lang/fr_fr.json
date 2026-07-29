@@ -1,11 +1,13 @@
 {
-  "enchantment.neoenchant.poison_strike": "Toucher Empoisonnée",
-  "enchantment.neoenchant.frost_aspect": "Aura de Glace",
+  "enchantment.neoenchant.poison_strike": "Toucher empoisonnée",
+  "enchantment.neoenchant.frost_aspect": "Aura de glace",
   "effect.neoenchant.frost": "Givre",
   "enchantment.neoenchant.frost": "Givre",
-  "block.neoenchant.primordial_monolith": "Monolithe Primordial",
-  "block.neoenchant.primordial_obsidian": "Obsidienne Primordiale",
+  "block.neoenchant.primordial_monolith": "Monolithe primordial",
+  "block.neoenchant.primordial_obsidian": "Obsidienne primordiale",
   "enchantment.neoenchant.timber": "Abattage",
-  "enchantment.neoenchant.mineral_echo": "Écho Minéral",
-  "enchantment.neoenchant.heros_bane": "Fléau des Héros"
+  "enchantment.neoenchant.mineral_echo": "Écho minéral",
+  "enchantment.neoenchant.heros_bane": "Fléau des héros",
+  "enchantment.neoenchant.arcane_silence": "Silence arcanique",
+  "effect.neoenchant.silenced": "Silence"
 }

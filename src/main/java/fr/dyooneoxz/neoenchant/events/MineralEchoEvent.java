@@ -42,6 +42,8 @@ public class MineralEchoEvent {
         ItemStack handItem = player.getMainHandItem();
         int echoLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.MINERAL_ECHO.get(), handItem);
 
+        int maxOres = echoLevel == 3 ? 16 : (echoLevel == 2 ? 12 : 8);
+
         if (echoLevel <= 0 || !startState.is(Tags.Blocks.ORES)) return;
 
         event.setCanceled(true);
@@ -54,7 +56,7 @@ public class MineralEchoEvent {
 
         Block targetOreBlock = startState.getBlock();
 
-        while (!queue.isEmpty() && ores.size() < 64) {
+        while (!queue.isEmpty() && ores.size() < maxOres) {
             BlockPos current = queue.poll();
 
             for (int x = -1; x <= 1; x++) {
@@ -65,8 +67,11 @@ public class MineralEchoEvent {
                             BlockState checkState = level.getBlockState(checkPos);
 
                             if (checkState.is(targetOreBlock)) {
-                                ores.add(checkPos);
-                                queue.add(checkPos);
+
+                                if (ores.size() < maxOres) {
+                                    ores.add(checkPos);
+                                    queue.add(checkPos);
+                                }
                             }
                         }
                     }

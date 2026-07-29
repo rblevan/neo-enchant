@@ -1,6 +1,10 @@
 package fr.dyooneoxz.neoenchant.enchantments;
 
 import fr.dyooneoxz.neoenchant.init.ModEffects;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -10,7 +14,6 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.BowItem;
-
 
 public class FrostEnchantment extends Enchantment {
 
@@ -25,6 +28,19 @@ public class FrostEnchantment extends Enchantment {
     }
 
     // Methods
+
+    @Override
+    public Component getFullname(int level) {
+        MutableComponent mutablecomponent = Component.translatable(this.getDescriptionId());
+        mutablecomponent.withStyle(ChatFormatting.AQUA);
+
+        // Ajoute le niveau en chiffres romains si l'enchantement a un niveau supérieur à 1
+        if (level != 1 || this.getMaxLevel() != 1) {
+            mutablecomponent.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + level));
+        }
+
+        return mutablecomponent;
+    }
 
     // -- LEVEL CONFIG -- //
 
