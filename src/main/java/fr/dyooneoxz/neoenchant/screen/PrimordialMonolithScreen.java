@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("removal")
 public class PrimordialMonolithScreen extends AbstractContainerScreen<PrimordialMonolithMenu> {
 
     private static final ResourceLocation TEXTURE =

@@ -19,7 +19,7 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, NeoEnchant.MODID);
 
     public static final RegistryObject<Block> PRIMORDIAL_MONOLITH = registerBlock("primordial_monolith",
-            () -> new PrimordialMonolithBlock(BlockBehaviour.Properties.copy(Blocks.ENCHANTING_TABLE)));
+            () -> new PrimordialMonolithBlock(BlockBehaviour.Properties.copy(Blocks.ENCHANTING_TABLE).noOcclusion()));
 
     public static final RegistryObject<Block> PRIMORDIAL_OBSIDIAN = registerBlock("primordial_obsidian",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));

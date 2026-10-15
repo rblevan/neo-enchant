@@ -3,7 +3,6 @@ package fr.dyooneoxz.neoenchant.client.renderer.layers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fr.dyooneoxz.neoenchant.NeoEnchant;
-import fr.dyooneoxz.neoenchant.init.ModEffects;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -15,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+@SuppressWarnings("removal")
 @OnlyIn(Dist.CLIENT)
 public class FrostAuraLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
 

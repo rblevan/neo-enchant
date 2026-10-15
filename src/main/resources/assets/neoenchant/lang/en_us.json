@@ -9,6 +9,7 @@
   "enchantment.neoenchant.mineral_echo": "Mineral echo",
   "enchantment.neoenchant.heros_bane": "Hero's bane",
   "enchantment.neoenchant.arcane_silence": "Arcane silence",
-  "effect.neoenchant.silenced": "Silenced"
-
+  "effect.neoenchant.silenced": "Silenced",
+  "enchantment.neoenchant.arcane_overload": "Arcane overload",
+  "enchantment.neoenchant.retribution_aegis": "Retribution Aegis"
 }

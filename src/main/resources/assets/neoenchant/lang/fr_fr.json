@@ -9,5 +9,7 @@
   "enchantment.neoenchant.mineral_echo": "Écho minéral",
   "enchantment.neoenchant.heros_bane": "Fléau des héros",
   "enchantment.neoenchant.arcane_silence": "Silence arcanique",
-  "effect.neoenchant.silenced": "Silence"
+  "effect.neoenchant.silenced": "Silence",
+  "enchantment.neoenchant.arcane_overload": "Surcharge arcanique",
+  "enchantment.neoenchant.retribution_aegis": "Égide de rétribution"
 }

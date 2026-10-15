@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+@SuppressWarnings("removal")
 @OnlyIn(Dist.CLIENT)
 public class PrimordialMonolithRenderer implements BlockEntityRenderer<PrimordialMonolithBlockEntity> {
 

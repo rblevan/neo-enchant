@@ -13,6 +13,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 
+
+@SuppressWarnings("removal")
 @Mod(NeoEnchant.MODID)
 public class NeoEnchant
 {
