@@ -26,20 +26,16 @@ public class ArcaneOverloadEvent {
                 if (level > 0) {
                     int effectiveLevel = Math.min(player.experienceLevel, 200);
 
-                    float xpBonus = (effectiveLevel * 0.025f) * level;
+                    float xpBonus = (effectiveLevel * 0.1f) * level;
 
                     event.setAmount(event.getAmount() + xpBonus);
 
-                    // ==========================================
-                    // OPTION : PÉNALITÉ D'XP
-                    // Décommente ce bloc pour que chaque flèche réussie consomme un peu d'XP
-                    // ==========================================
-                    /*
+
                     if (!player.getAbilities().instabuild && player.experienceLevel > 0) {
                         // Retire 1 point d'XP (pas un niveau entier, juste un point)
-                        player.giveExperiencePoints(-1);
+                        player.giveExperienceLevels(-1);
                     }
-                    */
+
                 }
             }
         }

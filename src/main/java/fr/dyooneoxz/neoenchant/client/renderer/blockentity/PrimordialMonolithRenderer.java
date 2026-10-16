@@ -33,14 +33,14 @@ public class PrimordialMonolithRenderer implements BlockEntityRenderer<Primordia
     public void render(PrimordialMonolithBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
 
-        poseStack.translate(0.5D, 1.12D, 0.5D);
+        poseStack.translate(0.5D, 0.95D, 0.5D);
 
-        float scale = 0.65F;
+        float scale = 0.55F;
         poseStack.scale(scale, scale, scale);
 
         float time = blockEntity.getLevel().getGameTime() + partialTick;
         float rotation = time * 3.0F;
-        float bobbing = (float) Math.sin(time * 0.1F) * 0.15F;
+        float bobbing = (float) Math.sin(time * 0.1F) * 0.06F;
 
         poseStack.translate(0.0D, bobbing, 0.0D);
         poseStack.mulPose(Axis.YP.rotationDegrees(rotation));

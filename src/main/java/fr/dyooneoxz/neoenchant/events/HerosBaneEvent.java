@@ -2,6 +2,8 @@ package fr.dyooneoxz.neoenchant.events;
 
 import fr.dyooneoxz.neoenchant.NeoEnchant;
 import fr.dyooneoxz.neoenchant.init.ModEnchantments;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -15,9 +17,7 @@ public class HerosBaneEvent {
 
     @SubscribeEvent
     public static void onPlayerAttack(LivingHurtEvent event) {
-
         if (!(event.getEntity() instanceof Player targetPlayer)) return;
-
         if (!(event.getSource().getEntity() instanceof Player attackerPlayer)) return;
 
         ItemStack weapon = attackerPlayer.getMainHandItem();
@@ -25,20 +25,23 @@ public class HerosBaneEvent {
 
         if (baneLevel > 0) {
             float originalDamage = event.getAmount();
-            float bonusDamage = baneLevel * 2.0f;
 
+            // +10% par hero's bane (10% / 20% / 30%)
+            float bonusPercentage = baneLevel * 0.10f;
+
+            // +3% par Sharpness (+15% max sharpness V)
             int sharpnessLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SHARPNESS, weapon);
-
             if (sharpnessLevel > 0) {
-                float synergyBoost = (sharpnessLevel * baneLevel) * 0.625f;
-                bonusDamage += synergyBoost;
+                bonusPercentage += (sharpnessLevel * 0.03f);
 
                 attackerPlayer.level().playSound(null, targetPlayer.blockPosition(),
-                        net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_CRIT,
-                        net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.2F);
+                        SoundEvents.PLAYER_ATTACK_CRIT,
+                        SoundSource.PLAYERS, 1.0F, 1.2F);
             }
 
-            event.setAmount(originalDamage + bonusDamage);
+            // calcul final
+            float finalDamage = originalDamage * (1.0f + bonusPercentage);
+            event.setAmount(finalDamage);
         }
     }
 }
